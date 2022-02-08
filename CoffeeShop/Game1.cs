@@ -100,5 +100,10 @@ namespace CoffeeShop
 
             base.Draw(gameTime);
         }
+
+        private void ButtonPress(GameState nextState)
+        {
+            currState = nextState;
+        }
     }
 }
