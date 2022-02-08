@@ -15,8 +15,10 @@ namespace CoffeeShop
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
         #region Textures
         private Texture2D title;
+        private Texture2D storeBase;
         #endregion
 
         private GameState currState;
@@ -24,6 +26,9 @@ namespace CoffeeShop
         // used to hold game window measurements
         private int width;
         private int height;
+
+        private MouseState prevMouse;
+        private KeyboardState prevKeyboard;
 
         public Game1()
         {
@@ -51,8 +56,9 @@ namespace CoffeeShop
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // load textures
             title = this.Content.Load<Texture2D>("CoffeeTitle");
+            storeBase = this.Content.Load<Texture2D>("tempBase");
         }
 
         protected override void Update(GameTime gameTime)
@@ -87,6 +93,7 @@ namespace CoffeeShop
                     _spriteBatch.Draw(title, new Rectangle(0, 0, width, height), Color.White);
                     break;
                 case GameState.game:
+                    _spriteBatch.Draw(storeBase, new Rectangle(0, 0, width, height), Color.White);
                     break;
                 case GameState.menu:
                     break;
@@ -101,9 +108,12 @@ namespace CoffeeShop
             base.Draw(gameTime);
         }
 
-        private void ButtonPress(GameState nextState)
+        private void ButtonPress(GameState nextState, MouseState mouse, Rectangle button)
         {
-            currState = nextState;
+            if (mouse.LeftButton == ButtonState.Released && prevMouse.LeftButton == ButtonState.Pressed && button.Contains(mouse.Position))
+            {
+                currState = nextState;
+            }
         }
     }
 }
