@@ -9,6 +9,8 @@ namespace CoffeeShop
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Texture2D title;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -20,6 +22,8 @@ namespace CoffeeShop
         {
             // TODO: Add your initialization logic here
 
+           
+
             base.Initialize();
         }
 
@@ -28,6 +32,7 @@ namespace CoffeeShop
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            //title = this.Content.Load<Texture2D>("CoffeeTitle");
         }
 
         protected override void Update(GameTime gameTime)
