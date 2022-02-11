@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace CoffeeShop
 {    public enum GameState
@@ -19,6 +20,9 @@ namespace CoffeeShop
         #region Textures
         private Texture2D title;
         private Texture2D storeBase;
+        private Texture2D backCounter;
+        private Texture2D barista;
+        private Texture2D coffeeMakerTxr;
         #endregion
 
         private GameState currState;
@@ -27,8 +31,14 @@ namespace CoffeeShop
         private int width;
         private int height;
 
+        private bool interacted;
+
         private MouseState prevMouse;
-        private KeyboardState prevKeyboard;
+
+        private Vector2 baristaLoc;
+
+        private Equipment coffeeMaker;
+        private Barista player;
 
         public Game1()
         {
@@ -47,7 +57,11 @@ namespace CoffeeShop
             width = _graphics.GraphicsDevice.Viewport.Width;
             height = _graphics.GraphicsDevice.Viewport.Height;
 
-            currState = GameState.title;
+            currState = GameState.game;
+
+            baristaLoc = new Vector2(150, 200);
+
+            interacted = false;
 
             base.Initialize();
         }
@@ -59,16 +73,30 @@ namespace CoffeeShop
             // load textures
             title = this.Content.Load<Texture2D>("CoffeeTitle");
             storeBase = this.Content.Load<Texture2D>("tempBase");
+            backCounter = this.Content.Load<Texture2D>("counter");
+            barista = this.Content.Load<Texture2D>("tempBarista");
+            coffeeMakerTxr = this.Content.Load<Texture2D>("coffeeMaker");
+
+            coffeeMaker = new Equipment(_spriteBatch, coffeeMakerTxr, "Brevilla", new Rectangle(400, 50, 75, 100));
+            player = new Barista(_spriteBatch, barista, new Rectangle((int)baristaLoc.X, (int)baristaLoc.Y, 75, 185));
         }
 
         protected override void Update(GameTime gameTime)
         {
+            MouseState mouse = Mouse.GetState();
+
             // switches scenes
             switch (currState)
             {
                 case GameState.title:
                     break;
                 case GameState.game:
+                    if (!interacted)
+                    {
+                        player.Update(gameTime, mouse, prevMouse);
+                    }
+
+                    Interact(mouse, coffeeMaker);
                     break;
                 case GameState.menu:
                     break;
@@ -77,6 +105,8 @@ namespace CoffeeShop
                 default:
                     break;
             }
+
+            prevMouse = mouse;
 
             base.Update(gameTime);
         }
@@ -94,6 +124,15 @@ namespace CoffeeShop
                     break;
                 case GameState.game:
                     _spriteBatch.Draw(storeBase, new Rectangle(0, 0, width, height), Color.White);
+                    _spriteBatch.Draw(backCounter, new Rectangle(300, 125, 550, 100), Color.White);
+
+                    coffeeMaker.Draw(gameTime);
+                    player.Draw(gameTime);
+
+                    if (interacted)
+                    {
+                        _spriteBatch.Draw(coffeeMakerTxr, new Rectangle(100, 0, width - 250, height), Color.White);
+                    }
                     break;
                 case GameState.menu:
                     break;
@@ -114,6 +153,16 @@ namespace CoffeeShop
             {
                 currState = nextState;
             }
+        }
+
+        private void Interact(MouseState mouse, Equipment item)
+        {
+            
+            if (item.Pos.Contains(mouse.Position) && item.Pos.Intersects(player.Pos) && mouse.LeftButton == ButtonState.Pressed && prevMouse.LeftButton == ButtonState.Released)
+            {
+                interacted = !interacted;
+            }
+
         }
     }
 }
