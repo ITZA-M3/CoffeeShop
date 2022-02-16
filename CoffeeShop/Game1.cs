@@ -23,6 +23,7 @@ namespace CoffeeShop
         private Texture2D backCounter;
         private Texture2D barista;
         private Texture2D coffeeMakerTxr;
+        private Texture2D startBttn;
         #endregion
 
         private GameState currState;
@@ -35,7 +36,7 @@ namespace CoffeeShop
 
         private MouseState prevMouse;
 
-        private Vector2 baristaLoc;
+        private Rectangle bttn;
 
         private Equipment coffeeMaker;
         private Barista player;
@@ -57,11 +58,11 @@ namespace CoffeeShop
             width = _graphics.GraphicsDevice.Viewport.Width;
             height = _graphics.GraphicsDevice.Viewport.Height;
 
-            currState = GameState.game;
-
-            baristaLoc = new Vector2(150, 200);
+            currState = GameState.title;
 
             interacted = false;
+
+            bttn = new Rectangle(100, 100, 250, 50);
 
             base.Initialize();
         }
@@ -76,9 +77,10 @@ namespace CoffeeShop
             backCounter = this.Content.Load<Texture2D>("counter");
             barista = this.Content.Load<Texture2D>("tempBarista");
             coffeeMakerTxr = this.Content.Load<Texture2D>("coffeeMaker");
+            startBttn = this.Content.Load<Texture2D>("startBttn");
 
             coffeeMaker = new Equipment(_spriteBatch, coffeeMakerTxr, "Brevilla", new Rectangle(400, 50, 75, 100));
-            player = new Barista(_spriteBatch, barista, new Rectangle((int)baristaLoc.X, (int)baristaLoc.Y, 75, 185));
+            player = new Barista(_spriteBatch, barista, new Rectangle(150, 200, 75, 185));
         }
 
         protected override void Update(GameTime gameTime)
@@ -89,6 +91,7 @@ namespace CoffeeShop
             switch (currState)
             {
                 case GameState.title:
+                    ButtonPress(GameState.game, mouse, bttn);
                     break;
                 case GameState.game:
                     if (!interacted)
@@ -121,6 +124,7 @@ namespace CoffeeShop
             {
                 case GameState.title:
                     _spriteBatch.Draw(title, new Rectangle(0, 0, width, height), Color.White);
+                    _spriteBatch.Draw(startBttn, bttn, Color.White);
                     break;
                 case GameState.game:
                     _spriteBatch.Draw(storeBase, new Rectangle(0, 0, width, height), Color.White);
